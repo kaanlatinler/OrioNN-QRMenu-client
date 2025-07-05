@@ -42,16 +42,18 @@ export default function Users() {
   }, [t]);
 
   // Filter users based on search term
-  const filteredUsers = users.filter((user) => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      user.firstName?.toLowerCase().includes(searchLower) ||
-      user.lastName?.toLowerCase().includes(searchLower) ||
-      user.email?.toLowerCase().includes(searchLower) ||
-      user.phone?.toLowerCase().includes(searchLower) ||
-      user.role?.name?.toLowerCase().includes(searchLower)
-    );
-  });
+  const filteredUsers = Array.isArray(users)
+    ? users.filter((user) => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          user.firstName?.toLowerCase().includes(searchLower) ||
+          user.lastName?.toLowerCase().includes(searchLower) ||
+          user.email?.toLowerCase().includes(searchLower) ||
+          user.phone?.toLowerCase().includes(searchLower) ||
+          user.role?.name?.toLowerCase().includes(searchLower)
+        );
+      })
+    : [];
 
   const handleActivate = async (userId) => {
     setActionLoading((prev) => ({ ...prev, [userId]: true }));
@@ -191,7 +193,7 @@ export default function Users() {
                     {t("error")}: {error}
                   </td>
                 </tr>
-              ) : users.length === 0 ? (
+              ) : !Array.isArray(users) || users.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center text-warning">
                     {t("noDataFound")}

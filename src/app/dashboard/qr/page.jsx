@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import QRCode from "react-qr-code";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -8,6 +8,7 @@ export default function QRGenerator() {
   const [value, setValue] = useState("");
   const [qrValue, setQrValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const qrRef = useRef(null);
 
   const handleGenerateQR = () => {
     if (!value.trim()) {
@@ -23,15 +24,59 @@ export default function QRGenerator() {
   };
 
   const handleDownloadQR = () => {
-    if (!qrValue) return;
+    if (!qrValue) {
+      alert("Please generate a QR code first");
+      return;
+    }
 
-    const canvas = document.querySelector("canvas");
-    if (canvas) {
+    // Find the SVG element using ref
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) {
+      alert("QR code element not found");
+      return;
+    }
+
+    // Create a canvas element
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas size
+    const size = 256;
+    canvas.width = size;
+    canvas.height = size;
+
+    // Create a new image
+    const img = new Image();
+
+    // Convert SVG to data URL
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = () => {
+      // Draw the image on canvas
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, 0, 0, size, size);
+
+      // Create download link
       const link = document.createElement("a");
       link.download = `qr-code-${Date.now()}.png`;
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL("image/png");
       link.click();
-    }
+
+      // Clean up
+      URL.revokeObjectURL(url);
+    };
+
+    img.onerror = () => {
+      alert("Failed to generate QR code image");
+      URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
   };
 
   const handleClear = () => {
@@ -203,7 +248,7 @@ export default function QRGenerator() {
                     <div className="qr-result">
                       <div className="card border-0 bg-light">
                         <div className="card-body p-4">
-                          <div className="qr-container mb-3">
+                          <div className="qr-container mb-3" ref={qrRef}>
                             <QRCode
                               value={qrValue}
                               size={200}

@@ -151,21 +151,23 @@ export default function Products() {
   };
 
   // Filter products based on search term
-  const filteredProducts = products.filter((product) => {
-    const searchLower = searchTerm.toLowerCase();
-    const categoryName = getCategoryName(product.categoryId).toLowerCase();
-    return (
-      product.title?.toLowerCase().includes(searchLower) ||
-      product.description?.toLowerCase().includes(searchLower) ||
-      categoryName.includes(searchLower) ||
-      (product.translations &&
-        product.translations.some(
-          (trans) =>
-            trans.title?.toLowerCase().includes(searchLower) ||
-            trans.description?.toLowerCase().includes(searchLower)
-        ))
-    );
-  });
+  const filteredProducts = Array.isArray(products)
+    ? products.filter((product) => {
+        const searchLower = searchTerm.toLowerCase();
+        const categoryName = getCategoryName(product.categoryId).toLowerCase();
+        return (
+          product.title?.toLowerCase().includes(searchLower) ||
+          product.description?.toLowerCase().includes(searchLower) ||
+          categoryName.includes(searchLower) ||
+          (product.translations &&
+            product.translations.some(
+              (trans) =>
+                trans.title?.toLowerCase().includes(searchLower) ||
+                trans.description?.toLowerCase().includes(searchLower)
+            ))
+        );
+      })
+    : [];
 
   return (
     <div className="card">
@@ -243,7 +245,7 @@ export default function Products() {
                     {t("error")}: {error}
                   </td>
                 </tr>
-              ) : products.length === 0 ? (
+              ) : !Array.isArray(products) || products.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center text-warning">
                     {t("noDataFound")}

@@ -42,18 +42,26 @@ export default function Dashboard() {
 
         // Calculate statistics
         setStats({
-          totalUsers: users.length,
-          totalCategories: categories.length,
-          totalProducts: products.length,
-          activeUsers: users.filter((user) => user.isActive).length,
-          activeCategories: categories.filter((cat) => cat.isActive).length,
-          activeProducts: products.filter((prod) => prod.isActive).length,
+          totalUsers: Array.isArray(users) ? users.length : 0,
+          totalCategories: Array.isArray(categories) ? categories.length : 0,
+          totalProducts: Array.isArray(products) ? products.length : 0,
+          activeUsers: Array.isArray(users)
+            ? users.filter((user) => user.isActive).length
+            : 0,
+          activeCategories: Array.isArray(categories)
+            ? categories.filter((cat) => cat.isActive).length
+            : 0,
+          activeProducts: Array.isArray(products)
+            ? products.filter((prod) => prod.isActive).length
+            : 0,
         });
 
         // Get recent items (last 5)
-        setRecentUsers(users.slice(0, 5));
-        setRecentCategories(categories.slice(0, 5));
-        setRecentProducts(products.slice(0, 5));
+        setRecentUsers(Array.isArray(users) ? users.slice(0, 5) : []);
+        setRecentCategories(
+          Array.isArray(categories) ? categories.slice(0, 5) : []
+        );
+        setRecentProducts(Array.isArray(products) ? products.slice(0, 5) : []);
       }
     } catch (err) {
       setError(err.message);

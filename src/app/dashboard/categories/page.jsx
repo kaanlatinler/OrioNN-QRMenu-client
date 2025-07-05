@@ -44,19 +44,21 @@ export default function Categories() {
   }, [currentLanguage, t]);
 
   // Filter categories based on search term
-  const filteredCategories = categories.filter((category) => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      category.title?.toLowerCase().includes(searchLower) ||
-      category.description?.toLowerCase().includes(searchLower) ||
-      (category.translations &&
-        category.translations.some(
-          (trans) =>
-            trans.title?.toLowerCase().includes(searchLower) ||
-            trans.description?.toLowerCase().includes(searchLower)
-        ))
-    );
-  });
+  const filteredCategories = Array.isArray(categories)
+    ? categories.filter((category) => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          category.title?.toLowerCase().includes(searchLower) ||
+          category.description?.toLowerCase().includes(searchLower) ||
+          (category.translations &&
+            category.translations.some(
+              (trans) =>
+                trans.title?.toLowerCase().includes(searchLower) ||
+                trans.description?.toLowerCase().includes(searchLower)
+            ))
+        );
+      })
+    : [];
 
   const handleActivate = async (categoryId) => {
     setActionLoading((prev) => ({ ...prev, [categoryId]: true }));
@@ -221,7 +223,7 @@ export default function Categories() {
                     {t("error")}: {error}
                   </td>
                 </tr>
-              ) : categories.length === 0 ? (
+              ) : !Array.isArray(categories) || categories.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center text-warning">
                     {t("noDataFound")}
