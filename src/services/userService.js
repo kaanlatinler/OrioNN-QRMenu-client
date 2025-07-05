@@ -1,86 +1,59 @@
 import apiClient from "./api";
 
-const register = async (userData) => {
-  try {
-    const response = await apiClient.post("/auth/register", userData);
-    return response.data;
-  } catch (error) {
-    const message =
-      error.response?.data?.message || error.message || "Registration failed";
-    console.error("Register service error:", message);
-    throw new Error(message);
-  }
+export const getAllUsers = async (params = {}) => {
+  const queryParams = new URLSearchParams();
+
+  if (params.page) queryParams.append("page", params.page);
+  if (params.limit) queryParams.append("limit", params.limit);
+  if (params.isActive !== undefined)
+    queryParams.append("isActive", params.isActive);
+  if (params.search) queryParams.append("search", params.search);
+  if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+  if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+  const url = `/auth/users${
+    queryParams.toString() ? `?${queryParams.toString()}` : ""
+  }`;
+  const res = await apiClient.get(url);
+  return res.data;
 };
 
-const getAllUsers = async () => {
-  try {
-    const response = await apiClient.get("/auth/users");
-    return response.data;
-  } catch (error) {
-    const message =
-      error.response?.data?.message || error.message || "Fetching users failed";
-    console.error("Get all users service error:", message);
-    throw new Error(message);
-  }
+export const getUserById = async (id) => {
+  const res = await apiClient.get(`/users/${id}`);
+  return res.data;
 };
 
-const updateUser = async (id, data) => {
-  try {
-    const response = await apiClient.put(`/auth/users/${id}`, data);
-    return response.data;
-  } catch (error) {
-    const message =
-      error.response?.data?.message || error.message || "Updating user failed";
-    console.error("Update user service error:", message);
-    throw new Error(message);
-  }
+export const createUser = async (data) => {
+  const res = await apiClient.post("/auth/register", data);
+  return res.data;
 };
 
-const activateUser = async (id) => {
-  try {
-    const response = await apiClient.patch(`/auth/users/${id}/activate`);
-    return response.data;
-  } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Activating user failed";
-    console.error("Activate user service error:", message);
-    throw new Error(message);
-  }
+export const updateUser = async (id, data) => {
+  const res = await apiClient.put(`/auth/users/${id}`, data);
+  return res.data;
 };
 
-const deactivateUser = async (id) => {
-  try {
-    const response = await apiClient.patch(`/auth/users/${id}/deactivate`);
-    return response.data;
-  } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Deactivating user failed";
-    console.error("Deactivate user service error:", message);
-    throw new Error(message);
-  }
+export const deleteUser = async (id) => {
+  const res = await apiClient.delete(`/auth/users/${id}`);
+  return res.data;
 };
 
-const deleteUser = async (id) => {
-  try {
-    const response = await apiClient.delete(`/auth/users/${id}`);
-    return response.data;
-  } catch (error) {
-    const message =
-      error.response?.data?.message || error.message || "Deleting user failed";
-    console.error("Delete user service error:", message);
-    throw new Error(message);
-  }
+export const activateUser = async (id) => {
+  const res = await apiClient.patch(`/auth/users/${id}/activate`);
+  return res.data;
 };
 
-export {
-  register,
-  getAllUsers,
-  updateUser,
-  activateUser,
-  deactivateUser,
-  deleteUser,
+export const deactivateUser = async (id) => {
+  const res = await apiClient.patch(`/auth/users/${id}/deactivate`);
+  return res.data;
+};
+
+export const changePassword = async (id, data) => {
+  const res = await apiClient.put(`/auth/users/${id}/password`, data);
+  return res.data;
+};
+
+export const login = async (data) => {
+  const res = await apiClient.post("/auth/login", data);
+  return res.data;
 };

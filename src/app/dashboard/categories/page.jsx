@@ -21,6 +21,7 @@ export default function Categories() {
   const [actionLoading, setActionLoading] = useState({});
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showTranslationModal, setShowTranslationModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchCategories = async () => {
     try {
@@ -41,6 +42,21 @@ export default function Categories() {
   useEffect(() => {
     fetchCategories();
   }, [currentLanguage, t]);
+
+  // Filter categories based on search term
+  const filteredCategories = categories.filter((category) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      category.title?.toLowerCase().includes(searchLower) ||
+      category.description?.toLowerCase().includes(searchLower) ||
+      (category.translations &&
+        category.translations.some(
+          (trans) =>
+            trans.title?.toLowerCase().includes(searchLower) ||
+            trans.description?.toLowerCase().includes(searchLower)
+        ))
+    );
+  });
 
   const handleActivate = async (categoryId) => {
     setActionLoading((prev) => ({ ...prev, [categoryId]: true }));
@@ -173,6 +189,8 @@ export default function Categories() {
             className="form-control ms-1"
             placeholder={t("search")}
             aria-label="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
@@ -210,7 +228,7 @@ export default function Categories() {
                   </td>
                 </tr>
               ) : (
-                categories.map((cat) => (
+                filteredCategories.map((cat) => (
                   <tr key={cat.id}>
                     <td>{cat.title}</td>
                     <td>{cat.description}</td>
@@ -331,33 +349,70 @@ export default function Categories() {
       {/* Translation Modal */}
       {showTranslationModal && selectedCategory && (
         <div
-          className="modal fade show"
-          style={{ display: "block" }}
-          tabIndex="-1"
+          className="modal-overlay"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1050,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onClick={handleTranslationClose}
         >
-          <div className="modal-dialog modal-xl">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  {t("translations")} - {selectedCategory.title}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={handleTranslationClose}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <TranslationManager
-                  item={selectedCategory}
-                  onSave={handleTranslationSave}
-                  onCancel={handleTranslationClose}
-                  itemType="category"
-                />
-              </div>
+          <div
+            className="modal-content"
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              overflow: "auto",
+              position: "relative",
+              zIndex: 1051,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="modal-header"
+              style={{ padding: "1rem", borderBottom: "1px solid #dee2e6" }}
+            >
+              <h5 className="modal-title" style={{ margin: 0 }}>
+                {t("translations")} - {selectedCategory.title}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleTranslationClose}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                  padding: "0",
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body" style={{ padding: "1rem" }}>
+              <TranslationManager
+                item={selectedCategory}
+                onSave={handleTranslationSave}
+                onCancel={handleTranslationClose}
+                itemType="category"
+              />
             </div>
           </div>
-          <div className="modal-backdrop fade show"></div>
         </div>
       )}
     </div>

@@ -39,6 +39,8 @@ const translations = {
     show: "Göster",
     hide: "Gizle",
     selectCategory: "Kategori Seçin",
+    title: "Başlık",
+    description: "Açıklama",
 
     // Menu Items
     categories: "Kategoriler",
@@ -85,6 +87,9 @@ const translations = {
     address: "Adres",
     name: "Ad",
     surname: "Soyad",
+    firstName: "Ad",
+    lastName: "Soyad",
+    role: "Rol",
 
     // Dashboard
     dashboard: "Kontrol Paneli",
@@ -197,6 +202,8 @@ const translations = {
     show: "Show",
     hide: "Hide",
     selectCategory: "Select Category",
+    title: "Title",
+    description: "Description",
 
     // Menu Items
     categories: "Categories",
@@ -243,6 +250,9 @@ const translations = {
     address: "Address",
     name: "Name",
     surname: "Surname",
+    firstName: "First Name",
+    lastName: "Last Name",
+    role: "Role",
 
     // Dashboard
     dashboard: "Dashboard",
@@ -355,6 +365,8 @@ const translations = {
     show: "Показать",
     hide: "Скрыть",
     selectCategory: "Выберите категорию",
+    title: "Заголовок",
+    description: "Описание",
 
     // Menu Items
     categories: "Категории",
@@ -401,6 +413,9 @@ const translations = {
     address: "Адрес",
     name: "Имя",
     surname: "Фамилия",
+    firstName: "Имя",
+    lastName: "Фамилия",
+    role: "Роль",
 
     // Dashboard
     dashboard: "Панель управления",

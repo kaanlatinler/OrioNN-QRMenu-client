@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { getAllRoles } from "../../../services/roleService";
-import { register } from "../../../services/userService";
+import { createUser } from "../../../services/userService";
 
 const AddUserForm = ({ onUserAdded }) => {
   const [formData, setFormData] = useState({
@@ -45,7 +45,7 @@ const AddUserForm = ({ onUserAdded }) => {
     setError(null);
     setSuccess(null);
     try {
-      const response = await register(formData);
+      const response = await createUser(formData);
       if (response.success) {
         setSuccess("User registered successfully!");
         if (onUserAdded) {
