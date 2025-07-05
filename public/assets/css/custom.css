@@ -1,0 +1,109 @@
+/* Custom styles for product cards */
+.hover-scale {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Product card text truncation */
+.product-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+/* Gradient overlay for better text readability */
+.card-overlay {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  border-radius: 0 0 1rem 1rem;
+  min-height: 40%;
+}
+
+/* Smooth transitions */
+.card {
+  transition: all 0.3s ease;
+}
+
+/* Enhanced shadow on hover */
+.card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Text styling improvements */
+.card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.card-description {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0;
+}
+
+/* Product price badge styling */
+.product-price {
+  background: linear-gradient(45deg, #007bff, #0056b3) !important;
+  border: none;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.product-price:hover {
+  background: linear-gradient(45deg, #0056b3, #004085) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+/* Spinning animation for loading icons */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button group styling */
+.btn-group .btn {
+  margin-right: 2px;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+/* Icon button styling */
+.btn i {
+  font-size: 0.875rem;
+}
+
+/* Tooltip styling */
+.btn[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+}
