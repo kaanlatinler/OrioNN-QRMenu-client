@@ -1,14 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { updateUser } from "@/services/userService";
+import { getAllRoles } from "@/services/roleService";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
+  console.log("UpdateUserForm props:", { user, show });
+
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
+    roleId: "",
   });
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -19,9 +26,29 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
         lastName: user.lastName || "",
         email: user.email || "",
         phone: user.phone || "",
+        roleId: user.roleId || user.role?.id || "",
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await getAllRoles();
+        if (response.success) {
+          setRoles(response.data);
+        } else {
+          setError(response.message || "Failed to fetch roles");
+        }
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    if (show) {
+      fetchRoles();
+    }
+  }, [show]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,13 +89,26 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
   return (
     <div
       className="modal fade show d-block"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1055,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
       onClick={handleBackdropClick}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog" style={{ margin: "1.75rem auto" }}>
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Kullanıcı Güncelle</h5>
+            <h5 className="modal-title">
+              {t("edit")} {t("user")}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -81,7 +121,7 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
 
               <div className="mb-3">
                 <label htmlFor="firstName" className="form-label">
-                  Ad
+                  {t("firstName")}
                 </label>
                 <input
                   type="text"
@@ -96,7 +136,7 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
 
               <div className="mb-3">
                 <label htmlFor="lastName" className="form-label">
-                  Soyad
+                  {t("lastName")}
                 </label>
                 <input
                   type="text"
@@ -111,7 +151,7 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
 
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
-                  Email
+                  {t("email")}
                 </label>
                 <input
                   type="email"
@@ -126,7 +166,7 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
 
               <div className="mb-3">
                 <label htmlFor="phone" className="form-label">
-                  Telefon
+                  {t("phone")}
                 </label>
                 <input
                   type="tel"
@@ -137,6 +177,29 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
                   onChange={handleChange}
                 />
               </div>
+
+              <div className="mb-3">
+                <label htmlFor="roleId" className="form-label">
+                  {t("role")}
+                </label>
+                <select
+                  className="form-select"
+                  id="roleId"
+                  name="roleId"
+                  value={formData.roleId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">{t("selectRole")}</option>
+                  {roles
+                    .filter((r) => r.name !== "Admin")
+                    .map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
             </div>
             <div className="modal-footer">
               <button
@@ -144,14 +207,14 @@ const UpdateUserForm = ({ user, onUserUpdated, onClose, show }) => {
                 className="btn btn-secondary"
                 onClick={onClose}
               >
-                İptal
+                {t("cancel")}
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={loading}
               >
-                {loading ? "Güncelleniyor..." : "Güncelle"}
+                {loading ? t("loading") : t("update")}
               </button>
             </div>
           </form>

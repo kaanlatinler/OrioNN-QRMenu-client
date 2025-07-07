@@ -1,7 +1,16 @@
 import apiClient from "./api";
 
-export const getAllProducts = async (language = "tr") => {
-  const res = await apiClient.get(`/products?language=${language}`);
+export const getAllProducts = async (
+  language = "tr",
+  page = 1,
+  limit = 10,
+  search = ""
+) => {
+  let url = `/products?language=${language}&page=${page}&limit=${limit}`;
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+  const res = await apiClient.get(url);
   return res.data;
 };
 
@@ -39,5 +48,10 @@ export const deactivateProduct = async (id) => {
 
 export const deleteProduct = async (id) => {
   const res = await apiClient.delete(`/products/${id}`);
+  return res.data;
+};
+
+export const incrementProductView = async (id) => {
+  const res = await apiClient.patch(`/products/${id}/view`);
   return res.data;
 };

@@ -7,6 +7,7 @@ import Script from "next/script";
 import { isAuthenticated, removeToken } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 export default function DashboardLayout({ children }) {
   const router = useRouter();
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -20,6 +21,48 @@ export default function DashboardLayout({ children }) {
       }
     }
   }, [router]);
+
+  // Initialize sidebar toggle functionality
+  useEffect(() => {
+    if (typeof window !== "undefined" && !checkingAuth) {
+      // Wait for DOM to be ready
+      const initSidebarToggle = () => {
+        const sidebarToggleBtn = document.querySelectorAll(
+          '[data-toggle="sidebar"]'
+        );
+        const sidebar = document.querySelector(".sidebar-default");
+
+        if (sidebar !== null) {
+          const sidebarActiveItem = sidebar.querySelectorAll(".active");
+          Array.from(sidebarActiveItem, (elem) => {
+            if (!elem.closest("ul").classList.contains("iq-main-menu")) {
+              const childMenu = elem.closest("ul");
+              childMenu.classList.add("show");
+              const parentMenu = childMenu
+                .closest("li")
+                .querySelector(".nav-link");
+              parentMenu.classList.add("collapsed");
+              parentMenu.setAttribute("aria-expanded", true);
+            }
+          });
+        }
+
+        Array.from(sidebarToggleBtn, (sidebarBtn) => {
+          sidebarBtn.addEventListener("click", (e) => {
+            const sidebar = document.querySelector(".sidebar");
+            if (sidebar.classList.contains("sidebar-mini")) {
+              sidebar.classList.remove("sidebar-mini");
+            } else {
+              sidebar.classList.add("sidebar-mini");
+            }
+          });
+        });
+      };
+
+      // Initialize after a short delay to ensure DOM is ready
+      setTimeout(initSidebarToggle, 100);
+    }
+  }, [checkingAuth]);
 
   if (checkingAuth) {
     return null; // or <Loading />

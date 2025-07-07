@@ -1,6 +1,17 @@
 import React from "react";
 
 const Header = () => {
+  const handleSidebarToggle = () => {
+    const sidebar = document.querySelector(".sidebar-default");
+    if (sidebar) {
+      if (sidebar.classList.contains("sidebar-mini")) {
+        sidebar.classList.remove("sidebar-mini");
+      } else {
+        sidebar.classList.add("sidebar-mini");
+      }
+    }
+  };
+
   return (
     <div className="position-relative">
       <nav className="nav navbar navbar-expand-lg navbar-light iq-navbar">
@@ -12,6 +23,7 @@ const Header = () => {
             className="sidebar-toggle"
             data-toggle="sidebar"
             data-active="true"
+            onClick={handleSidebarToggle}
           >
             <i className="icon">
               <svg width="20px" height="20px" viewBox="0 0 24 24">

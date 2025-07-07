@@ -40,11 +40,11 @@ export const deleteCategory = async (id) => {
 };
 
 export const activateCategory = async (id) => {
-  const res = await apiClient.put(`/categories/${id}/activate`);
+  const res = await apiClient.patch(`/categories/${id}/activate`);
   return res.data;
 };
 
 export const deactivateCategory = async (id) => {
-  const res = await apiClient.put(`/categories/${id}/deactivate`);
+  const res = await apiClient.patch(`/categories/${id}/deactivate`);
   return res.data;
 };

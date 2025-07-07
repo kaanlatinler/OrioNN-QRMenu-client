@@ -25,12 +25,26 @@ export default function Products() {
   const [showTranslationModal, setShowTranslationModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchProducts = async () => {
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const fetchProducts = async (page = currentPage, limit = itemsPerPage) => {
     try {
       setLoading(true);
-      const response = await getAllProducts(currentLanguage);
+      const response = await getAllProducts(
+        currentLanguage,
+        page,
+        limit,
+        searchTerm
+      );
       if (response.success) {
         setProducts(response.data.products);
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+        setCurrentPage(response.data.pagination.currentPage);
       } else {
         setError(response.message || t("error"));
       }
@@ -56,6 +70,31 @@ export default function Products() {
     fetchProducts();
     fetchCategories();
   }, [currentLanguage, t]);
+
+  // Handle search changes
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page when searching
+      fetchProducts(1, itemsPerPage);
+    }, 500); // Debounce search
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+  // Handle pagination changes
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages || totalPages === 0) {
+      return; // Don't allow invalid page changes
+    }
+    setCurrentPage(page);
+    fetchProducts(page, itemsPerPage);
+  };
+
+  const handleItemsPerPageChange = (limit) => {
+    setItemsPerPage(limit);
+    setCurrentPage(1); // Reset to first page
+    fetchProducts(1, limit);
+  };
 
   const getCategoryName = (categoryId) => {
     const category = categories.find((cat) => cat.id === categoryId);
@@ -115,6 +154,7 @@ export default function Products() {
   };
 
   const handleUpdate = (product) => {
+    console.log("Update button clicked for product:", product);
     setSelectedProduct(product);
     setShowUpdateModal(true);
   };
@@ -150,25 +190,6 @@ export default function Products() {
     }
   };
 
-  // Filter products based on search term
-  const filteredProducts = Array.isArray(products)
-    ? products.filter((product) => {
-        const searchLower = searchTerm.toLowerCase();
-        const categoryName = getCategoryName(product.categoryId).toLowerCase();
-        return (
-          product.title?.toLowerCase().includes(searchLower) ||
-          product.description?.toLowerCase().includes(searchLower) ||
-          categoryName.includes(searchLower) ||
-          (product.translations &&
-            product.translations.some(
-              (trans) =>
-                trans.title?.toLowerCase().includes(searchLower) ||
-                trans.description?.toLowerCase().includes(searchLower)
-            ))
-        );
-      })
-    : [];
-
   return (
     <div className="card">
       <div className="card-header">
@@ -187,14 +208,13 @@ export default function Products() {
             border: "1px solid #69697a",
             borderRadius: "0.5rem",
           }}
-          id="validationDefault04"
-          required
-          defaultValue=""
+          value={itemsPerPage}
+          onChange={(e) => handleItemsPerPageChange(parseInt(e.target.value))}
         >
-          <option value="">10</option>
-          <option>20</option>
-          <option>30</option>
-          <option>40</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={30}>30</option>
+          <option value={40}>40</option>
         </select>
         <button
           type="button"
@@ -224,6 +244,7 @@ export default function Products() {
               <tr>
                 <th>{t("title")}</th>
                 <th>{t("description")}</th>
+                <th>{t("price")}</th>
                 <th>{t("image")}</th>
                 <th>{t("category")}</th>
                 <th>{t("active")}</th>
@@ -235,27 +256,29 @@ export default function Products() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="text-center">
+                  <td colSpan="10" className="text-center">
                     {t("loading")}
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="8" className="text-center text-danger">
+                  <td colSpan="10" className="text-center text-danger">
                     {t("error")}: {error}
                   </td>
                 </tr>
               ) : !Array.isArray(products) || products.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center text-warning">
+                  <td colSpan="10" className="text-center text-warning">
                     {t("noDataFound")}
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((product) => (
+                products.map((product) => (
                   <tr key={product.id}>
                     <td>{product.title}</td>
                     <td>{product.description}</td>
+                    <td>₺{(+product.price || 0).toFixed(2)}</td>
+
                     <td>
                       {product.image ? (
                         <img
@@ -363,27 +386,99 @@ export default function Products() {
         </div>
       </div>
 
+      {/* Pagination Controls */}
+      {!loading && !error && (
+        <div className="card-footer d-flex justify-content-between align-items-center">
+          <div className="text-muted">
+            {totalItems > 0 ? (
+              <>
+                {t("showing")} {(currentPage - 1) * itemsPerPage + 1} -{" "}
+                {Math.min(currentPage * itemsPerPage, totalItems)} {t("of")}{" "}
+                {totalItems} {t("products")}
+              </>
+            ) : (
+              t("noDataFound")
+            )}
+          </div>
+          {totalPages > 0 && (
+            <nav aria-label="Product pagination">
+              <ul className="pagination pagination-sm mb-0">
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    {t("previous")}
+                  </button>
+                </li>
+
+                {/* Page numbers */}
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const pageNum =
+                    Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                  if (pageNum > totalPages) return null;
+
+                  return (
+                    <li
+                      key={pageNum}
+                      className={`page-item ${
+                        pageNum === currentPage ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(pageNum)}
+                      >
+                        {pageNum}
+                      </button>
+                    </li>
+                  );
+                })}
+
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages ? "disabled" : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    {t("next")}
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          )}
+        </div>
+      )}
+
       {/* Update Product Modal */}
       {showUpdateModal && selectedProduct && (
         <UpdateProductForm
           product={selectedProduct}
           onProductUpdated={fetchProducts}
           onClose={handleUpdateClose}
+          show={showUpdateModal}
         />
       )}
 
       {/* Translation Modal */}
       {showTranslationModal && selectedProduct && (
         <div
-          className="modal-overlay"
+          className="modal fade show d-block"
           style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 1050,
+            zIndex: 1055,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -391,52 +486,29 @@ export default function Products() {
           onClick={handleTranslationClose}
         >
           <div
-            className="modal-content"
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "8px",
-              maxWidth: "90vw",
-              maxHeight: "90vh",
-              overflow: "auto",
-              position: "relative",
-              zIndex: 1051,
-            }}
+            className="modal-dialog modal-lg"
+            style={{ margin: "1.75rem auto" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="modal-header"
-              style={{ padding: "1rem", borderBottom: "1px solid #dee2e6" }}
-            >
-              <h5 className="modal-title" style={{ margin: 0 }}>
-                {t("translations")} - {selectedProduct.title}
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={handleTranslationClose}
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "1.5rem",
-                  cursor: "pointer",
-                  padding: "0",
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body" style={{ padding: "1rem" }}>
-              <TranslationManager
-                item={selectedProduct}
-                onSave={handleTranslationSave}
-                onCancel={handleTranslationClose}
-                itemType="product"
-              />
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {t("translations")} - {selectedProduct.title}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={handleTranslationClose}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <TranslationManager
+                  item={selectedProduct}
+                  onSave={handleTranslationSave}
+                  onCancel={handleTranslationClose}
+                  itemType="product"
+                />
+              </div>
             </div>
           </div>
         </div>

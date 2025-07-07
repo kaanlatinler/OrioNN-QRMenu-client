@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { updateCategory } from "@/services/categoryService";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
+  const { t } = useLanguage();
+
   const [formData, setFormData] = useState({
-    title: "",
     description: "",
   });
   const [image, setImage] = useState(null);
@@ -15,7 +17,6 @@ const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
   useEffect(() => {
     if (category) {
       setFormData({
-        title: category.title || "",
         description: category.description || "",
       });
       setImagePreview(category.image || "");
@@ -42,7 +43,6 @@ const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
       if (image) {
         formDataToSend.append("image", image);
@@ -81,13 +81,26 @@ const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
   return (
     <div
       className="modal fade show d-block"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1055,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
       onClick={handleBackdropClick}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog" style={{ margin: "1.75rem auto" }}>
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Kategori Güncelle</h5>
+            <h5 className="modal-title">
+              {t("update")} {t("category")}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -99,23 +112,8 @@ const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
               {error && <div className="alert alert-danger">{error}</div>}
 
               <div className="mb-3">
-                <label htmlFor="title" className="form-label">
-                  Başlık
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
                 <label htmlFor="description" className="form-label">
-                  Açıklama
+                  {t("description")}
                 </label>
                 <textarea
                   className="form-control"
@@ -129,7 +127,7 @@ const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
 
               <div className="mb-3">
                 <label htmlFor="image" className="form-label">
-                  Görsel
+                  {t("image")}
                 </label>
                 <input
                   type="file"
@@ -160,14 +158,14 @@ const UpdateCategoryForm = ({ category, onCategoryUpdated, onClose, show }) => {
                 className="btn btn-secondary"
                 onClick={onClose}
               >
-                İptal
+                {t("cancel")}
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={loading}
               >
-                {loading ? "Güncelleniyor..." : "Güncelle"}
+                {loading ? t("loading") : t("update")}
               </button>
             </div>
           </form>

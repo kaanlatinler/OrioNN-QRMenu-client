@@ -113,6 +113,7 @@ export default function Categories() {
   };
 
   const handleUpdate = (category) => {
+    console.log("Update button clicked for category:", category);
     setSelectedCategory(category);
     setShowUpdateModal(true);
   };
@@ -345,21 +346,22 @@ export default function Categories() {
           category={selectedCategory}
           onCategoryUpdated={fetchCategories}
           onClose={handleUpdateClose}
+          show={showUpdateModal}
         />
       )}
 
       {/* Translation Modal */}
       {showTranslationModal && selectedCategory && (
         <div
-          className="modal-overlay"
+          className="modal fade show d-block"
           style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 1050,
+            zIndex: 1055,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -367,52 +369,29 @@ export default function Categories() {
           onClick={handleTranslationClose}
         >
           <div
-            className="modal-content"
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "8px",
-              maxWidth: "90vw",
-              maxHeight: "90vh",
-              overflow: "auto",
-              position: "relative",
-              zIndex: 1051,
-            }}
+            className="modal-dialog modal-lg"
+            style={{ margin: "1.75rem auto" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="modal-header"
-              style={{ padding: "1rem", borderBottom: "1px solid #dee2e6" }}
-            >
-              <h5 className="modal-title" style={{ margin: 0 }}>
-                {t("translations")} - {selectedCategory.title}
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={handleTranslationClose}
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "1.5rem",
-                  cursor: "pointer",
-                  padding: "0",
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body" style={{ padding: "1rem" }}>
-              <TranslationManager
-                item={selectedCategory}
-                onSave={handleTranslationSave}
-                onCancel={handleTranslationClose}
-                itemType="category"
-              />
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {t("translations")} - {selectedCategory.title}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={handleTranslationClose}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <TranslationManager
+                  item={selectedCategory}
+                  onSave={handleTranslationSave}
+                  onCancel={handleTranslationClose}
+                  itemType="category"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -40,9 +40,9 @@ const Header = () => {
           {/* Center: Logo */}
           <div className="text-center" style={{ flex: 1 }}>
             <img
-              src="/assets/images/logo/logo.png"
+              src="/assets/images/logo/logofooter.png"
               alt="Cafe/Restaurant Logo"
-              style={{ height: "40px", objectFit: "contain" }}
+              style={{ height: "60px", objectFit: "contain" }}
             />
           </div>
 

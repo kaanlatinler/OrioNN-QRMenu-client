@@ -7,25 +7,29 @@ import Loading from "@/components/menu/shared/Loading";
 import SubHeader from "@/components/menu/SubHeader";
 import { useEffect, useState, use } from "react";
 import { getCategoryByTitle } from "@/services/categoryService";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Category({ params }) {
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { currentLanguage } = useLanguage();
 
   // Unwrap params using React.use() for Next.js 15 compatibility
   const unwrappedParams = use(params);
-  const slug = unwrappedParams.slug;
+  const slug = decodeURIComponent(unwrappedParams.slug);
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
       try {
         setLoading(true);
-        const response = await getCategoryByTitle(slug);
+        const response = await getCategoryByTitle(slug, currentLanguage);
         if (response.success) {
           setCategory(response.data);
-          setProducts(response.data.Products || []);
+          const activeProducts =
+            response.data.Products?.filter((product) => product.isActive) || [];
+          setProducts(activeProducts);
         } else {
           setError(response.message || "Kategori verisi alınamadı");
         }
@@ -35,9 +39,8 @@ export default function Category({ params }) {
         setLoading(false);
       }
     };
-
     if (slug) fetchCategoryProducts();
-  }, [slug]);
+  }, [slug, currentLanguage]);
 
   return (
     <main className="main-content">
@@ -58,6 +61,12 @@ export default function Category({ params }) {
           ) : products.length === 0 ? (
             <div className="alert alert-warning text-center my-5">
               Bu kategoride ürün bulunamadı.
+              <br />
+              <small>Kategori: {category?.title}</small>
+              <br />
+              <small>
+                Toplam ürün sayısı: {category?.Products?.length || 0}
+              </small>
             </div>
           ) : (
             products.map((product) => (

@@ -2,11 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { updateProduct } from "@/services/productService";
 import { getAllCategories } from "@/services/categoryService";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
+  const { t, currentLanguage } = useLanguage();
+
   const [formData, setFormData] = useState({
-    title: "",
     description: "",
+    price: "",
     categoryId: "",
   });
   const [image, setImage] = useState(null);
@@ -18,18 +21,18 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
   useEffect(() => {
     if (product) {
       setFormData({
-        title: product.title || "",
         description: product.description || "",
+        price: product.price || "",
         categoryId: product.categoryId || "",
       });
       setImagePreview(product.image || "");
     }
     fetchCategories();
-  }, [product]);
+  }, [product, currentLanguage]);
 
   const fetchCategories = async () => {
     try {
-      const response = await getAllCategories();
+      const response = await getAllCategories(currentLanguage);
       if (response.success) {
         setCategories(response.data.categories);
       }
@@ -58,12 +61,18 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
+      formDataToSend.append("price", formData.price);
       formDataToSend.append("categoryId", formData.categoryId);
       if (image) {
         formDataToSend.append("image", image);
       }
+
+      console.log("Sending update data:", {
+        description: formData.description,
+        price: formData.price,
+        categoryId: formData.categoryId,
+      });
 
       const response = await updateProduct(product.id, formDataToSend);
       if (response.success) {
@@ -73,6 +82,7 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
         setError(response.message || "Failed to update product");
       }
     } catch (err) {
+      console.error("Update error:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -81,6 +91,7 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log("Form field changed:", name, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -98,13 +109,26 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
   return (
     <div
       className="modal fade show d-block"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1055,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
       onClick={handleBackdropClick}
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog" style={{ margin: "1.75rem auto" }}>
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Ürün Güncelle</h5>
+            <h5 className="modal-title">
+              {t("update")} {t("product")}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -116,23 +140,8 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
               {error && <div className="alert alert-danger">{error}</div>}
 
               <div className="mb-3">
-                <label htmlFor="title" className="form-label">
-                  Başlık
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
                 <label htmlFor="description" className="form-label">
-                  Açıklama
+                  {t("description")}
                 </label>
                 <textarea
                   className="form-control"
@@ -145,8 +154,45 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
               </div>
 
               <div className="mb-3">
+                <label htmlFor="price" className="form-label">
+                  {t("price")} *
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="form-control"
+                  id="price"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="categoryId" className="form-label">
+                  {t("category")}
+                </label>
+                <select
+                  className="form-select"
+                  id="categoryId"
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                >
+                  <option value="">{t("selectCategory")}</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-3">
                 <label htmlFor="image" className="form-label">
-                  Görsel
+                  {t("image")}
                 </label>
                 <input
                   type="file"
@@ -170,26 +216,6 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
                   </div>
                 )}
               </div>
-
-              <div className="mb-3">
-                <label htmlFor="categoryId" className="form-label">
-                  Kategori
-                </label>
-                <select
-                  className="form-select"
-                  id="categoryId"
-                  name="categoryId"
-                  value={formData.categoryId}
-                  onChange={handleChange}
-                >
-                  <option value="">Kategori Seçin</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
             <div className="modal-footer">
               <button
@@ -197,14 +223,14 @@ const UpdateProductForm = ({ product, onProductUpdated, onClose, show }) => {
                 className="btn btn-secondary"
                 onClick={onClose}
               >
-                İptal
+                {t("cancel")}
               </button>
               <button
                 type="submit"
                 className="btn btn-primary"
                 disabled={loading}
               >
-                {loading ? "Güncelleniyor..." : "Güncelle"}
+                {loading ? t("loading") : t("update")}
               </button>
             </div>
           </form>

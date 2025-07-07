@@ -108,6 +108,7 @@ export default function Users() {
   };
 
   const handleUpdate = (user) => {
+    console.log("Update button clicked for user:", user);
     setSelectedUser(user);
     setShowUpdateModal(true);
   };
@@ -281,6 +282,7 @@ export default function Users() {
           user={selectedUser}
           onUserUpdated={fetchUsers}
           onClose={handleUpdateClose}
+          show={showUpdateModal}
         />
       )}
     </div>

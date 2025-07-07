@@ -8,6 +8,7 @@ export default function AddProductForm({ onProductAdded }) {
   const { t, currentLanguage, getAvailableLanguages } = useLanguage();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -66,6 +67,7 @@ export default function AddProductForm({ onProductAdded }) {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
+      formData.append("price", price);
       formData.append("categoryId", categoryId);
       if (image) {
         formData.append("image", image);
@@ -89,6 +91,7 @@ export default function AddProductForm({ onProductAdded }) {
       await createProduct(formData);
       setTitle("");
       setDescription("");
+      setPrice("");
       setImage(null);
       setImagePreview("");
       setCategoryId("");
@@ -153,6 +156,18 @@ export default function AddProductForm({ onProductAdded }) {
                       className="form-control"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">{t("price")} *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      className="form-control"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      required
                     />
                   </div>
                   <div className="mb-3">

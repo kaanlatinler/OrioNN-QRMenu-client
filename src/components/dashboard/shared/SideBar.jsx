@@ -225,6 +225,17 @@ const SideBar = () => {
     },
   ];
 
+  const handleSidebarToggle = () => {
+    const sidebar = document.querySelector(".sidebar-default");
+    if (sidebar) {
+      if (sidebar.classList.contains("sidebar-mini")) {
+        sidebar.classList.remove("sidebar-mini");
+      } else {
+        sidebar.classList.add("sidebar-mini");
+      }
+    }
+  };
+
   const handleClick = (route) => {
     router.push(route);
   };
@@ -288,6 +299,7 @@ const SideBar = () => {
           className="sidebar-toggle d-xl-none"
           data-toggle="sidebar"
           data-active="true"
+          onClick={handleSidebarToggle}
         >
           <i className="icon">
             {/* SVG Toggle Icon */}
