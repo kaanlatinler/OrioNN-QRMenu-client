@@ -4,8 +4,15 @@ import { getAllUsers } from "@/services/userService";
 import { getAllCategories } from "@/services/categoryService";
 import { getAllProducts } from "@/services/productService";
 import moment from "moment";
+import { useLanguage } from "@/contexts/LanguageContext";
+import Head from "next/head";
+import { getFriendlyErrorMessage } from "@/utils/errorMessages";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
+  useEffect(() => {
+    document.title = `OrioNN QR Menu — ${t("dashboard")}`;
+  }, [t]);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalCategories: 0,
@@ -64,7 +71,7 @@ export default function Dashboard() {
         setRecentProducts(Array.isArray(products) ? products.slice(0, 5) : []);
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -244,18 +251,37 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Hata!</h4>
+        <h4 className="alert-heading">{t("error")}</h4>
         <p>{error}</p>
         <hr />
         <button className="btn btn-outline-danger" onClick={fetchDashboardData}>
-          Tekrar Dene
+          {t("retry") || "Tekrar Dene"}
         </button>
       </div>
     );
   }
 
   return (
-    <div>
+    <>
+      <Head>
+        <title>{`OrioNN QR Menu — ${t("dashboard")}`}</title>
+        <meta name="description" content={t("dashboardSeoDescription")} />
+        <meta
+          name="keywords"
+          content="QR Menu, Dashboard, OrioNN, Restaurant"
+        />
+        <meta
+          property="og:title"
+          content={`OrioNN QR Menu — ${t("dashboard")}`}
+        />
+        <meta
+          property="og:description"
+          content={t("dashboardSeoDescription")}
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="OrioNN QR Menu" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
       {/* Welcome Section */}
       <div className="row mb-4">
         <div className="col-12">
@@ -324,7 +350,7 @@ export default function Dashboard() {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M25 21V19C25 17.9391 24.5786 16.9217 23.8284 16.1716C23.0783 15.4214 22.0609 15 21 15H13C11.9391 15 10.9217 15.4214 10.1716 16.1716C9.42143 16.9217 9 17.9391 9 19V21M9 11C9 13.2091 7.20914 15 5 15C2.79086 15 1 13.2091 1 11C1 8.79086 2.79086 7 5 7C7.20914 7 9 8.79086 9 11ZM23 11C23 13.2091 21.2091 15 19 15C16.7909 15 15 13.2091 15 11C15 8.79086 16.7909 7 19 7C21.2091 7 23 8.79086 23 11Z"
+                d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M25 21V19C25 17.9391 24.5786 16.9217 23.8284 16.1716C23.0783 15.4214 22.0609 15 21 15H13C11.9391 15 10.9217 15.4214 10.1716 16.1716C9.42143 16.9217 9 17.9391 9 19V21M9 11C9 13.2091 7.20914 15 5 15C2.79086 15 1 13.2091 1 11C1 8.79086 2.79086 7 5 7C7.20914 7 9 8.79086 9 11ZM23 11C23 13.2091 21.2091 15 19 15C16.7909 15 16 13.2091 16 11C16 8.79086 17.7909 7 20 7C22.2091 7 24 8.79086 24 11Z"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
@@ -635,6 +661,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

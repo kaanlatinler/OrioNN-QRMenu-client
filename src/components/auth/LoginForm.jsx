@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { login, setToken } from "@/services/authService";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getFriendlyErrorMessage } from "@/utils/errorMessages";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +12,7 @@ const LoginForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +23,7 @@ const LoginForm = () => {
       setToken(res.data.token);
       router.replace("/dashboard");
     } catch (err) {
-      setError(err.message || "Giriş başarısız oldu");
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }

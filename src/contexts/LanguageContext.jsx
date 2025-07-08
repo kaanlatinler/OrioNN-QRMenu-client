@@ -361,6 +361,23 @@ const translations = {
     ],
     liabilityLimit:
       "Toplam sorumluluğumuz, talepten önceki 12 ay içinde Hizmet için ödediğiniz miktarı aşmayacaktır.",
+    // Error Messages
+    "error.network":
+      "Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.",
+    "error.notFound": "Kategori veya ürünler bulunamadı.",
+    "error.server":
+      "Ürünler alınırken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
+    "error.unknown": "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.",
+
+    // SEO Descriptions
+    homeSeoDescription:
+      "OrioNN QR Menu ile dijital menünüzü kolayca yönetin ve müşterilerinize sunun.",
+    categorySeoDescription:
+      "Kategoriler arasında gezinin ve menünüzdeki ürünleri keşfedin.",
+    dashboardSeoDescription:
+      "Yönetim panelinizden menünüzü, ürünlerinizi ve kullanıcılarınızı yönetin.",
+    demoSeoDescription:
+      "OrioNN QR Menu'nun çok dilli ve modern arayüzünü deneyimleyin.",
   },
 
   en: {
@@ -721,6 +738,23 @@ const translations = {
     ],
     liabilityLimit:
       "Our total liability shall not exceed the amount paid by you for the Service in the 12 months preceding the claim.",
+    // Error Messages
+    "error.network":
+      "We couldn't connect to the server. Please check your internet connection.",
+    "error.notFound": "The category or products could not be found.",
+    "error.server":
+      "There was a problem retrieving the products. Please try again later.",
+    "error.unknown": "An unexpected error occurred. Please try again.",
+
+    // SEO Descriptions
+    homeSeoDescription:
+      "Easily manage and present your digital menu to customers with OrioNN QR Menu.",
+    categorySeoDescription:
+      "Browse categories and discover products in your menu.",
+    dashboardSeoDescription:
+      "Manage your menu, products, and users from your admin dashboard.",
+    demoSeoDescription:
+      "Experience the multilingual and modern interface of OrioNN QR Menu.",
   },
 
   ru: {
@@ -1082,14 +1116,24 @@ const translations = {
     ],
     liabilityLimit:
       "Наша общая ответственность не превышает сумму, уплаченную вами за Услугу в течение 12 месяцев, предшествующих претензии.",
-    contactUs: "10. Свяжитесь с нами",
-    contactDesc:
-      "Если у вас есть вопросы об этой Политике конфиденциальности или Условиях использования, пожалуйста, свяжитесь с нами:",
-    contactInfo: [
-      "Электронная почта: info@orionn.com",
-      "Телефон: +90 XXX XXX XX XX",
-      "Адрес: [Детали адреса]",
-    ],
+    // Error Messages
+    "error.network":
+      "Не удалось подключиться к серверу. Пожалуйста, проверьте ваше интернет-соединение.",
+    "error.notFound": "Категория или продукты не найдены.",
+    "error.server":
+      "Произошла ошибка при получении продуктов. Пожалуйста, попробуйте позже.",
+    "error.unknown":
+      "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.",
+
+    // SEO Descriptions
+    homeSeoDescription:
+      "Легко управляйте и представляйте свое цифровое меню клиентам с помощью OrioNN QR Menu.",
+    categorySeoDescription:
+      "Просматривайте категории и открывайте для себя продукты в вашем меню.",
+    dashboardSeoDescription:
+      "Управляйте своим меню, продуктами и пользователями из панели администратора.",
+    demoSeoDescription:
+      "Оцените многоязычный и современный интерфейс OrioNN QR Menu.",
   },
 };
 

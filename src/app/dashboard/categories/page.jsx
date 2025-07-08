@@ -11,6 +11,7 @@ import AddCategoryForm from "@/components/dashboard/categories/AddCategoryForm";
 import UpdateCategoryForm from "@/components/dashboard/categories/UpdateCategoryForm";
 import TranslationManager from "@/components/dashboard/TranslationManager";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getFriendlyErrorMessage } from "@/utils/errorMessages";
 
 export default function Categories() {
   const { t, currentLanguage } = useLanguage();
@@ -33,7 +34,7 @@ export default function Categories() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -70,7 +71,7 @@ export default function Categories() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [categoryId]: false }));
     }
@@ -86,7 +87,7 @@ export default function Categories() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [categoryId]: false }));
     }
@@ -106,7 +107,7 @@ export default function Categories() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [categoryId]: false }));
     }
@@ -145,7 +146,7 @@ export default function Categories() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     }
   };
 

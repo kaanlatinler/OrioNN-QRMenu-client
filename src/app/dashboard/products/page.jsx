@@ -12,6 +12,7 @@ import AddProductForm from "@/components/dashboard/products/AddProductForm";
 import UpdateProductForm from "@/components/dashboard/products/UpdateProductForm";
 import TranslationManager from "@/components/dashboard/TranslationManager";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getFriendlyErrorMessage } from "@/utils/errorMessages";
 
 export default function Products() {
   const { t, currentLanguage } = useLanguage();
@@ -49,7 +50,7 @@ export default function Products() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,7 @@ export default function Products() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [productId]: false }));
     }
@@ -127,7 +128,7 @@ export default function Products() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [productId]: false }));
     }
@@ -147,7 +148,7 @@ export default function Products() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [productId]: false }));
     }
@@ -186,7 +187,7 @@ export default function Products() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     }
   };
 

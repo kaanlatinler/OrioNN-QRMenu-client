@@ -12,8 +12,8 @@ export default function RootLayout({ children }) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <title>Nairobi | Responsive Bootstrap 5 Admin Dashboard Template</title>
-        <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+        <title>OrioNN QR Menu</title>
+        <link rel="shortcut icon" href="/assets/images/orionn_dev_logo.jpg" />
         <link rel="stylesheet" href="/assets/css/libs.min.css" />
         <link rel="stylesheet" href="/assets/css/nairobi.css?v=1.0.0" />
         <link rel="stylesheet" href="/assets/css/custom.css" />

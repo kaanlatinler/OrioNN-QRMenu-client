@@ -7,6 +7,7 @@ import SubHeader from "@/components/menu/SubHeader";
 import { useEffect, useState } from "react";
 import { getActiveCategories } from "@/services/categoryService";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Head from "next/head";
 
 export default function Home() {
   const { t, currentLanguage } = useLanguage();
@@ -33,8 +34,22 @@ export default function Home() {
     fetchCategories();
   }, [currentLanguage, t]);
 
+  useEffect(() => {
+    document.title = `OrioNN QR Menu — ${t("home")}`;
+  }, [t]);
+
   return (
-    <div>
+    <>
+      <Head>
+        <title>{`OrioNN QR Menu — ${t("home")}`}</title>
+        <meta name="description" content={t("homeSeoDescription")} />
+        <meta name="keywords" content="QR Menu, Home, OrioNN, Restaurant" />
+        <meta property="og:title" content={`OrioNN QR Menu — ${t("home")}`} />
+        <meta property="og:description" content={t("homeSeoDescription")} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="OrioNN QR Menu" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
       <main className="main-content">
         <Header />
 
@@ -77,6 +92,6 @@ export default function Home() {
 
         <Footer />
       </main>
-    </div>
+    </>
   );
 }

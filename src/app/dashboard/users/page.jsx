@@ -10,6 +10,7 @@ import {
 } from "@/services/userService";
 import { useLanguage } from "@/contexts/LanguageContext";
 import moment from "moment";
+import { getFriendlyErrorMessage } from "@/utils/errorMessages";
 
 export default function Users() {
   const { t } = useLanguage();
@@ -31,7 +32,7 @@ export default function Users() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,7 @@ export default function Users() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [userId]: false }));
     }
@@ -81,7 +82,7 @@ export default function Users() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [userId]: false }));
     }
@@ -101,7 +102,7 @@ export default function Users() {
         setError(response.message || t("error"));
       }
     } catch (err) {
-      setError(err.message);
+      setError(getFriendlyErrorMessage(err, t));
     } finally {
       setActionLoading((prev) => ({ ...prev, [userId]: false }));
     }
