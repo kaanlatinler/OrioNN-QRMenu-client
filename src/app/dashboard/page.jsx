@@ -36,7 +36,7 @@ export default function Dashboard() {
       ]);
 
       if (usersRes.success && categoriesRes.success && productsRes.success) {
-        const users = usersRes.data || [];
+        const users = usersRes.data?.users || [];
         const categories = categoriesRes.data?.categories || [];
         const products = productsRes.data?.products || [];
 
